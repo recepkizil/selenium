@@ -87,7 +87,6 @@ class Test_Sauce:
         print(f"Ürün sayısı {len(productList)} adettir.")
            
 
-
 testClass = Test_Sauce()
 testClass.test_products_list()
 testClass.test_user_locked()
