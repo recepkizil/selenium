@@ -22,7 +22,8 @@ class Test_Sauce:
         testResult = errorMessage.text == "ERROR!!! Epic sadface: Username and password do not match any user in this service"
         print(f"TEST SONUCU: {testResult}")
 
-testClass = Test_Sauce()
+testClass = Test_Sauce() #classları kendi başına çalıştıramadığımız için onu değişkene atıyoruz
 testClass.test_invalid_login()
+
 
 
