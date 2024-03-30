@@ -4,22 +4,26 @@ from time import sleep
 from selenium.webdriver.support.wait import WebDriverWait  #ilgili driverı bekleyen yapı
 from selenium.webdriver.support import expected_conditions as ec  #
 from selenium.webdriver.common.action_chains import ActionChains
-
+import pytest
+import openpyxl
+from constants.globalConstants import * #klasör açtık ordan çekicez
+# üstteki importu "from constants import globalConstants as c" şeklinde yazsaydık ordakileri her çağırışımızda başına "c."" yazacaktık. c.BASE_URL gibi
 
 class Test_Odev:
 
     def setup_method(self):
         self.driver=webdriver.Chrome()
         self.driver.maximize_window()
-        self.driver.get("https://www.saucedemo.com/")
+        self.driver.get(BASE_URL) #constants klasörü açarak içine değişkenler oluşturduk ordan çektik
 
     def teardown_method(self):
         self.driver.quit()
-
+    
+    
     def test_blank_login(self):
-        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"user-name")))
-        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"password")))
-        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"login-button")))
+        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id)))
+        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
+        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
         actions.send_keys_to_element(userNameInput,"")
         actions.send_keys_to_element(passwordInput,"")
@@ -29,9 +33,9 @@ class Test_Odev:
         assert errorMessage.text=="Epic sadface: Username is required"
     
     def test_blank_password_login(self):
-        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"user-name")))
-        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"password")))
-        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"login-button")))
+        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id)))
+        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
+        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
         actions.send_keys_to_element(userNameInput,"Ahmet Suat Tanis")
         actions.send_keys_to_element(passwordInput,"")
@@ -42,9 +46,9 @@ class Test_Odev:
         
 
     def test_lockedUser_login(self):
-        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"user-name")))
-        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"password")))
-        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"login-button")))
+        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id))) 
+        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
+        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
         actions.send_keys_to_element(userNameInput,"locked_out_user")
         actions.send_keys_to_element(passwordInput,"secret_sauce")
@@ -54,9 +58,9 @@ class Test_Odev:
         assert errorMessage.text=="Epic sadface: Sorry, this user has been locked out."
 
     def test_valid_login(self):
-        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"user-name")))
-        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"password")))
-        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"login-button")))
+        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id)))
+        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
+        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
         actions.send_keys_to_element(userNameInput,"standard_user")
         actions.send_keys_to_element(passwordInput,"secret_sauce")
@@ -68,28 +72,45 @@ class Test_Odev:
         print(len(listOfProducts))
         assert len(listOfProducts)==6
 
-    def getData():
-        return [("ahmet","12345"),("naber","5341231"),("Ahmet Suat Tanis","secret_sauce")]
+    def waitForElementVisible(self,locator,timeout=5): #visibility kısımlarını kısaltmak için onu da fonk yaptık. örnek olsun diye 98.satırda yaptım.
+        WebDriverWait(self.driver,timeout).until(ec.visibility_of_element_located(locator))
 
+    #def getData(): #bunu iptal ettik excelden çektik artık
+        #return [("ahmet","12345"),("naber","5341231"),("Ahmet Suat Tanis","secret_sauce")]
+
+    def readInvalidDataFromExcel():
+        excelFile = openpyxl.load_workbook("data/invalidLogin.xlsx") #dosyanın nerde olduğunu gösterdik data klasöründe 
+        sheet = excelFile["Sheet1"] #sayfa değişkeni oluşturduk ve sayfayı söyledik
+        rows = sheet.max_row #kaçıncı satıra kadar verim var onu söyledik
+        data = []
+        for i in range(2,rows+1): #parametreler 2.satırda olddan 2den başlattık, veri 4te bitiyor ama rows +1 yazıyoruz sondaki de dahil olsun diye
+            username = sheet.cell(i,1).value #satırın 1.hücresi username'e gitsin. hücrenin içindeki değere ulaşmak için .value yazdık
+            password = sheet.cell(i,2).value #satırın 2.hücresi password'e gitsin
+            data.append((username,password)) 
+        return data #kullanılan noktaya bu datayı göndermek istediğimizi söylüyoruz
     
-    @pytest.mark.parametrize("username,password",getData())  
+    #artık pytest parametrize ile excel verilerimizi çağırabiliriz. get data örneğini siliyorum, parantez içine yeni defi yazıyorum
+
+
+    @pytest.mark.parametrize("username,password",readInvalidDataFromExcel())  
     def test_invalid_login(self,username,password):
-        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"user-name")))
-        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"password")))
-        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"login-button")))
+        #userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id))) eskiden böyleydi
+        userNameInput = self.waitForElementVisible((By.ID,username_id)) 
+        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
+        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
         actions.send_keys_to_element(userNameInput,username)
         actions.send_keys_to_element(passwordInput,password)
         actions.click(loginButton)
         actions.perform()
-        errorMesssage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3")))
-        assert errorMesssage.text=="Epic sadface: Username and password do not match any user in this service"
+        errorMesssage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,errorMessage_xpath)))
+        assert errorMesssage.text== errorMessage_text
 
     
     def test_addToCartProduct(self):
-        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"user-name")))
-        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"password")))
-        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"login-button")))
+        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id)))
+        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
+        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
         actions.send_keys_to_element(userNameInput,"standard_user")
         actions.send_keys_to_element(passwordInput,"secret_sauce")
@@ -103,9 +124,9 @@ class Test_Odev:
         assert cartButton.text=="1"
 
     def test_removeProductFromCart(self):
-        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"user-name")))
-        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"password")))
-        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"login-button")))
+        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id)))
+        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
+        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
         actions.send_keys_to_element(userNameInput,"standard_user")
         actions.send_keys_to_element(passwordInput,"secret_sauce")
@@ -123,9 +144,9 @@ class Test_Odev:
         assert cartButton.text=="1"
 
     def test_checkoutProduct(self):
-        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"user-name")))
-        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"password")))
-        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"login-button")))
+        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id)))
+        passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
+        loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
         actions.send_keys_to_element(userNameInput,"standard_user")
         
@@ -140,7 +161,7 @@ class Test_Odev:
         item2.click()
         cartButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//span[@class='shopping_cart_badge']")))
         cartButton.click()
-        
+       
         checkoutButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"checkout")))
         checkoutButton.click()
         firstName=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"first-name")))
@@ -149,11 +170,11 @@ class Test_Odev:
         continueButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"continue")))
         actions=ActionChains(self.driver)
         actions.send_keys_to_element(firstName,"Yasemin")
-        
+      
         actions.send_keys_to_element(lastName,"Beyaz")
-        
+       
         actions.send_keys_to_element(zipCode,"34212")
-        
+       
         actions.perform()
         continueButton.click()
         finishButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"finish")))
@@ -161,5 +182,5 @@ class Test_Odev:
         actions.click(finishButton)
         actions.perform()
         orderConfirmMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//h2[@class='complete-header']")))
-        assert orderConfirmMessage.text=="Thank you for your order!"
+        assert orderConfirmMessage.text== order_confirm_message_text
     

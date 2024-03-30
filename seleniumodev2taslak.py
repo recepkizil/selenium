@@ -32,11 +32,18 @@ class Test_Sauce:
         assert errorMessage.text == "ERROR!!! Epic sadface: Username and password do not match any user in this service"
      
 
-    def test_null_value(self):
+    def test_null_username(self):
+        userNameInput = WebDriverWait(self.driver,5).until(ec.visibility_of_element_located(By.ID,"user-name"))
+        passwordInput = WebDriverWait(self.driver,5).until(ec.visibility_of_element_located(By.ID,"password"))
         loginButton = WebDriverWait(self.driver,5).until(ec.visibility_of_element_located(By.ID,"login-button"))
-        loginButton.click()
-        expectedMessage = WebDriverWait(self.driver,5).until(ec.visibility_of_element_located(By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3"))
-        assert expectedMessage.text == "Epic sadface: Username is required"
+        actions = ActionChains(self.driver)
+        actions.send_keys_to_element(userNameInput,"")
+        #actions.send_keys_to_element(passwordInput,"")
+        actions.click(loginButton)
+        actions.perform()
+        errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located(By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3"))
+        assert errorMessage == "Epic sadface: Username is required"
+        
         
 
     def test_null_password(self):
