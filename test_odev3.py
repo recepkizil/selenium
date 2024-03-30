@@ -94,8 +94,8 @@ class Test_Odev:
 
     @pytest.mark.parametrize("username,password",readInvalidDataFromExcel())  
     def test_invalid_login(self,username,password):
-        #userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id))) eskiden böyleydi
-        userNameInput = self.waitForElementVisible((By.ID,username_id)) 
+        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id))) #eskiden böyleydi
+        #userNameInput = self.waitForElementVisible((By.ID,username_id)) 
         passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
         loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
@@ -103,8 +103,8 @@ class Test_Odev:
         actions.send_keys_to_element(passwordInput,password)
         actions.click(loginButton)
         actions.perform()
-        errorMesssage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,errorMessage_xpath)))
-        assert errorMesssage.text== errorMessage_text
+        errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,errorMessage_xpath)))
+        assert errorMessage.text == errorMessage_text
 
     
     def test_addToCartProduct(self):
