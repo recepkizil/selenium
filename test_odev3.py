@@ -73,7 +73,8 @@ class Test_Odev:
         assert len(listOfProducts)==6
 
     def waitForElementVisible(self,locator,timeout=5): #visibility kısımlarını kısaltmak için onu da fonk yaptık. örnek olsun diye 98.satırda yaptım.
-        WebDriverWait(self.driver,timeout).until(ec.visibility_of_element_located(locator))
+        return WebDriverWait(self.driver,timeout).until(ec.visibility_of_element_located(locator)) #BURADAKİ RETURN OLMAZSA AŞAĞIDAKİ KISALTMALAR ÇALIŞMIYOR
+        #webdriverwait ve ec ları döndürmek gerekiyor yoksa çalışmıyor.
 
     #def getData(): #bunu iptal ettik excelden çektik artık
         #return [("ahmet","12345"),("naber","5341231"),("Ahmet Suat Tanis","secret_sauce")]
@@ -94,8 +95,8 @@ class Test_Odev:
 
     @pytest.mark.parametrize("username,password",readInvalidDataFromExcel())  
     def test_invalid_login(self,username,password):
-        userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id))) #eskiden böyleydi
-        #userNameInput = self.waitForElementVisible((By.ID,username_id)) 
+        #userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id))) #eskiden böyleydi
+        userNameInput = self.waitForElementVisible((By.ID,username_id)) 
         passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
         loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
@@ -184,3 +185,6 @@ class Test_Odev:
         orderConfirmMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//h2[@class='complete-header']")))
         assert orderConfirmMessage.text== order_confirm_message_text
     
+
+
+    #BİR YER SARI VEYA BEYAZSA RETURN KULLANMAK SORUNU ÇÖZEBİLİR
