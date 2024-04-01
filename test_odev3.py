@@ -8,7 +8,7 @@ import pytest
 import openpyxl
 from constants.globalConstants import * #klasör açtık ordan çekicez
 # üstteki importu "from constants import globalConstants as c" şeklinde yazsaydık ordakileri her çağırışımızda başına "c."" yazacaktık. c.BASE_URL gibi
-
+import json
 class Test_Odev:
 
     def setup_method(self):
@@ -79,7 +79,7 @@ class Test_Odev:
     #def getData(): #bunu iptal ettik excelden çektik artık
         #return [("ahmet","12345"),("naber","5341231"),("Ahmet Suat Tanis","secret_sauce")]
 
-    def readInvalidDataFromExcel():
+    """def readInvalidDataFromExcel():
         excelFile = openpyxl.load_workbook("data/invalidLogin.xlsx") #dosyanın nerde olduğunu gösterdik data klasöründe 
         sheet = excelFile["Sheet1"] #sayfa değişkeni oluşturduk ve sayfayı söyledik
         rows = sheet.max_row #kaçıncı satıra kadar verim var onu söyledik
@@ -88,12 +88,18 @@ class Test_Odev:
             username = sheet.cell(i,1).value #satırın 1.hücresi username'e gitsin. hücrenin içindeki değere ulaşmak için .value yazdık
             password = sheet.cell(i,2).value #satırın 2.hücresi password'e gitsin
             data.append((username,password)) 
-        return data #kullanılan noktaya bu datayı göndermek istediğimizi söylüyoruz
+        return data #kullanılan noktaya bu datayı göndermek istediğimizi söylüyoruz"""
     
     #artık pytest parametrize ile excel verilerimizi çağırabiliriz. get data örneğini siliyorum, parantez içine yeni defi yazıyorum
+    #excelden sonra json öğrendik onu deniyoruz. import json yaptık
 
+    def readInvalidDataFromJSON(json_file_path):
+     with open(json_file_path, 'r') as file:
+        data = json.load(file)
+        invalid_users = data.get('invalid_login_users', [])
+        return [(user.get('username'), user.get('password')) for user in invalid_users]
 
-    @pytest.mark.parametrize("username,password",readInvalidDataFromExcel())  
+    @pytest.mark.parametrize("username,password",readInvalidDataFromJSON("invalid/data.json"))  
     def test_invalid_login(self,username,password):
         #userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id))) #eskiden böyleydi
         userNameInput = self.waitForElementVisible((By.ID,username_id)) 
