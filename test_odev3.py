@@ -9,6 +9,7 @@ import openpyxl
 from constants.globalConstants import * #klasör açtık ordan çekicez
 # üstteki importu "from constants import globalConstants as c" şeklinde yazsaydık ordakileri her çağırışımızda başına "c."" yazacaktık. c.BASE_URL gibi
 import json
+
 class Test_Odev:
 
     def setup_method(self):
@@ -30,7 +31,7 @@ class Test_Odev:
         actions.click(loginButton)
         actions.perform() 
         errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3")))
-        assert errorMessage.text=="Epic sadface: Username is required"
+        assert errorMessage.text == blank_error_text
     
     def test_blank_password_login(self):
         userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id)))
@@ -42,7 +43,7 @@ class Test_Odev:
         actions.click(loginButton)
         actions.perform() 
         errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3")))
-        assert errorMessage.text=="Epic sadface: Password is required" 
+        assert errorMessage.text == blank_password_text
         
 
     def test_lockedUser_login(self):
@@ -55,7 +56,7 @@ class Test_Odev:
         actions.click(loginButton)
         actions.perform() 
         errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3")))
-        assert errorMessage.text=="Epic sadface: Sorry, this user has been locked out."
+        assert errorMessage.text == locked_user_text
 
     def test_valid_login(self):
         userNameInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,username_id)))
