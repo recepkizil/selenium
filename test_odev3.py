@@ -30,7 +30,7 @@ class Test_Odev:
         actions.send_keys_to_element(passwordInput,"")
         actions.click(loginButton)
         actions.perform() 
-        errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3")))
+        errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,blank_error_text_xpath)))
         assert errorMessage.text == blank_error_text
     
     def test_blank_password_login(self):
@@ -42,7 +42,7 @@ class Test_Odev:
         actions.send_keys_to_element(passwordInput,"")
         actions.click(loginButton)
         actions.perform() 
-        errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3")))
+        errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,blank_password_text_xpath)))
         assert errorMessage.text == blank_password_text
         
 
@@ -55,7 +55,7 @@ class Test_Odev:
         actions.send_keys_to_element(passwordInput,"secret_sauce")
         actions.click(loginButton)
         actions.perform() 
-        errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3")))
+        errorMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH, locked_user_text_xpath)))
         assert errorMessage.text == locked_user_text
 
     def test_valid_login(self):
@@ -189,7 +189,7 @@ class Test_Odev:
         
         actions.click(finishButton)
         actions.perform()
-        orderConfirmMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,"//h2[@class='complete-header']")))
+        orderConfirmMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,order_confirm_xpath)))
         assert orderConfirmMessage.text== order_confirm_message_text
     
 
