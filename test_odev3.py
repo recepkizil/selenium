@@ -38,7 +38,7 @@ class Test_Odev:
         passwordInput=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,password_id)))
         loginButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,login_button_id)))
         actions=ActionChains(self.driver)
-        actions.send_keys_to_element(userNameInput,"Ahmet Suat Tanis")
+        actions.send_keys_to_element(userNameInput,"Recep")
         actions.send_keys_to_element(passwordInput,"")
         actions.click(loginButton)
         actions.perform() 
@@ -177,11 +177,11 @@ class Test_Odev:
         zipCode=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"postal-code")))
         continueButton=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.ID,"continue")))
         actions=ActionChains(self.driver)
-        actions.send_keys_to_element(firstName,"Yasemin")
+        actions.send_keys_to_element(firstName,"Recep")
       
-        actions.send_keys_to_element(lastName,"Beyaz")
+        actions.send_keys_to_element(lastName,"Kizil")
        
-        actions.send_keys_to_element(zipCode,"34212")
+        actions.send_keys_to_element(zipCode,"34100")
        
         actions.perform()
         continueButton.click()
