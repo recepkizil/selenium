@@ -83,7 +83,7 @@ class Test_Sauce:
         sleep(2)
         driver.get("https://www.saucedemo.com/inventory.html")
         sleep(2)
-        productList = driver.find_elements(By.CLASS_NAME,"inventory_item")
+        productList = driver.find_elements(By.CLASS_NAME,"inventory_item") #çoğul olduğundan find elements yaptık
         print(f"Ürün sayısı {len(productList)} adettir.")
            
 
