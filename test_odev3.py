@@ -192,6 +192,4 @@ class Test_Odev:
         orderConfirmMessage=WebDriverWait(self.driver,5).until(ec.visibility_of_element_located((By.XPATH,order_confirm_xpath)))
         assert orderConfirmMessage.text== order_confirm_message_text
     
-
-    #blabla
     #BİR YER SARI VEYA BEYAZSA RETURN KULLANMAK SORUNU ÇÖZEBİLİR
